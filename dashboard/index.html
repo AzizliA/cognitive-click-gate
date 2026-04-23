@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cognitive Click Gate – Dashboard</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <header>
+    <div class="header-inner">
+      <span class="header-icon">⚠</span>
+      <div>
+        <h1>Cognitive Click Gate</h1>
+        <p class="header-sub">Behavioral Analytics Dashboard</p>
+      </div>
+      <div class="header-actions">
+        <button id="btn-refresh" class="btn btn-secondary">↻ Refresh</button>
+        <button id="btn-clear" class="btn btn-danger">🗑 Clear All</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ── Summary Cards ── -->
+    <section class="cards">
+      <div class="card">
+        <div class="card-value" id="stat-attempts">—</div>
+        <div class="card-label">Click Attempts</div>
+      </div>
+      <div class="card">
+        <div class="card-value allow" id="stat-allows">—</div>
+        <div class="card-label">Allowed</div>
+      </div>
+      <div class="card">
+        <div class="card-value block" id="stat-blocks">—</div>
+        <div class="card-label">Blocked</div>
+      </div>
+      <div class="card">
+        <div class="card-value" id="stat-ratio">—</div>
+        <div class="card-label">Allow Ratio</div>
+      </div>
+      <div class="card">
+        <div class="card-value" id="stat-avg-time">—</div>
+        <div class="card-label">Avg Decision (s)</div>
+      </div>
+    </section>
+
+    <!-- ── Behavior Summary ── -->
+    <section class="panel">
+      <h2 class="panel-title">Behavior Summary</h2>
+      <div id="behavior-summary" class="summary-text">Loading…</div>
+    </section>
+
+    <!-- ── Allow / Block Bar ── -->
+    <section class="panel">
+      <h2 class="panel-title">Allow vs Block</h2>
+      <div class="bar-wrapper">
+        <div class="bar-track">
+          <div id="bar-allow" class="bar-segment bar-allow" style="width:0%">
+            <span class="bar-label" id="bar-allow-label"></span>
+          </div>
+          <div id="bar-block" class="bar-segment bar-block" style="width:0%">
+            <span class="bar-label" id="bar-block-label"></span>
+          </div>
+        </div>
+        <div class="bar-legend">
+          <span class="legend-dot allow"></span> Allow
+          &nbsp;&nbsp;
+          <span class="legend-dot block"></span> Block
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Top Domains ── -->
+    <section class="panel">
+      <h2 class="panel-title">Top Domains Clicked</h2>
+      <div id="top-domains">
+        <p class="empty-msg">No data yet.</p>
+      </div>
+    </section>
+
+    <!-- ── Recent Events ── -->
+    <section class="panel">
+      <h2 class="panel-title">Recent Events</h2>
+      <div class="table-wrap">
+        <table id="events-table">
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Type</th>
+              <th>Decision</th>
+              <th>Domain</th>
+              <th>Duration (s)</th>
+              <th>Sender</th>
+              <th>Trust</th>
+            </tr>
+          </thead>
+          <tbody id="events-body">
+            <tr><td colspan="7" class="empty-msg">No events yet.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <span id="last-updated">Never refreshed</span>
+    &nbsp;·&nbsp; Backend: <code>http://localhost:3000</code>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
