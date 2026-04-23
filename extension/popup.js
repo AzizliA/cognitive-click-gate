@@ -20,9 +20,17 @@ function computeStats(logs) {
       ? (times.reduce((a, b) => a + b, 0) / times.length / 1000).toFixed(1)
       : null;
 
+  const scores = decisions
+    .map((e) => e.score)
+    .filter((s) => typeof s === 'number' && !isNaN(s));
+  const avgScore =
+    scores.length > 0
+      ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length)
+      : null;
+
   const ratio = total > 0 ? ((allows / total) * 100).toFixed(0) + '%' : '—';
 
-  return { total, allows, blocks, avgTime, ratio };
+  return { total, allows, blocks, avgTime, avgScore, ratio };
 }
 
 function render(stats) {
@@ -31,6 +39,8 @@ function render(stats) {
   document.getElementById('blocks').textContent = stats.blocks;
   document.getElementById('avg-time').textContent =
     stats.avgTime !== null ? stats.avgTime : '—';
+  document.getElementById('avg-score').textContent =
+    stats.avgScore !== null ? stats.avgScore : '—';
   document.getElementById('ratio').textContent = stats.ratio;
 }
 
