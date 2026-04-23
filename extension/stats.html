@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cognitive Click Gate – Stats</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #0f0f13;
+      color: #e8e8ec;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      font-size: 15px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 32px 16px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    header .icon { font-size: 28px; }
+
+    header h1 {
+      font-size: 22px;
+      font-weight: 700;
+      color: #c8c8d8;
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 16px;
+      width: 100%;
+      max-width: 640px;
+      margin-bottom: 32px;
+    }
+
+    .card {
+      background: #1a1a24;
+      border: 1px solid #2a2a3a;
+      border-radius: 10px;
+      padding: 20px 16px;
+      text-align: center;
+    }
+
+    .card-value {
+      font-size: 36px;
+      font-weight: 700;
+      color: #a0a0ff;
+    }
+
+    .card-label {
+      font-size: 12px;
+      color: #6868a8;
+      margin-top: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+
+    .allow-color { color: #4caf85; }
+    .block-color { color: #cf5a5a; }
+
+    .btn-clear {
+      padding: 10px 24px;
+      background: #2a1a1a;
+      color: #a06060;
+      border: none;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+
+    .btn-clear:hover { opacity: 0.8; }
+
+    #status {
+      margin-top: 12px;
+      font-size: 12px;
+      color: #5050a0;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <span class="icon">📊</span>
+    <h1>Click Gate Stats</h1>
+  </header>
+
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-value" id="total">—</div>
+      <div class="card-label">Total Clicks</div>
+    </div>
+    <div class="card">
+      <div class="card-value allow-color" id="allows">—</div>
+      <div class="card-label">Allowed</div>
+    </div>
+    <div class="card">
+      <div class="card-value block-color" id="blocks">—</div>
+      <div class="card-label">Blocked</div>
+    </div>
+    <div class="card">
+      <div class="card-value" id="avg-time">—</div>
+      <div class="card-label">Avg Decision (s)</div>
+    </div>
+  </div>
+
+  <button class="btn-clear" id="clear-btn">🗑 Clear All Logs</button>
+  <div id="status"></div>
+
+  <script src="stats.js"></script>
+</body>
+</html>

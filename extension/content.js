@@ -6,7 +6,6 @@
 (function () {
   'use strict';
 
-  const BACKEND_URL = 'http://localhost:3000';
   const CURRENT_HOST = location.hostname;
 
   // ── Utility ──────────────────────────────────────────────
@@ -40,41 +39,15 @@
     }
   }
 
-  // ── LocalStorage helpers ──────────────────────────────────
+  // ── chrome.storage.local helpers ─────────────────────────
 
-  function loadLocalStats() {
-    try {
-      const raw = localStorage.getItem('ccg_stats');
-      return raw ? JSON.parse(raw) : { events: [] };
-    } catch {
-      return { events: [] };
-    }
-  }
+  let _logCounter = 0;
 
-  function saveLocalStats(stats) {
-    try {
-      localStorage.setItem('ccg_stats', JSON.stringify(stats));
-    } catch (err) {
-      console.warn('[CCG] localStorage write failed (quota exceeded?):', err);
-    }
-  }
-
-  function recordLocalEvent(event) {
-    const stats = loadLocalStats();
-    stats.events.push(event);
-    saveLocalStats(stats);
-  }
-
-  // ── Backend logging (best-effort) ─────────────────────────
-
-  function logToBackend(event) {
-    fetch(`${BACKEND_URL}/log-event`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(event),
-    }).catch((err) => {
-      console.debug('[CCG] Backend unreachable, event logged locally only:', err.message);
-    });
+  function saveLog(entry) {
+    // Use timestamp + incrementing counter per tab to guarantee unique keys
+    // across concurrent tabs writing at the same millisecond.
+    const key = 'ccg_log_' + entry.timestamp + '_' + (++_logCounter);
+    chrome.storage.local.set({ [key]: entry });
   }
 
   // ── Gate UI ───────────────────────────────────────────────
@@ -162,16 +135,7 @@
     const overlay = buildGate(href, clickedAt);
     document.body.appendChild(overlay);
 
-    // Log the click attempt
-    const attemptEvent = {
-      type: 'click_attempt',
-      url: href,
-      domain: getDomain(href),
-      timestamp: new Date(clickedAt).toISOString(),
-      pageUrl: location.href,
-    };
-    recordLocalEvent(attemptEvent);
-    logToBackend(attemptEvent);
+    // (click attempt is recorded when the decision is made)
 
     // Focus the first input for accessibility
     setTimeout(() => {
@@ -188,26 +152,19 @@
 
     function recordDecision(decision) {
       const decidedAt = Date.now();
-      const decisionTimeSec = ((decidedAt - clickedAt) / 1000).toFixed(2);
       const sender = (document.getElementById('ccg-sender') || {}).value || '';
       const trustEl = document.querySelector('input[name="ccg-trust"]:checked');
       const trust = trustEl ? trustEl.value : 'unanswered';
 
-      const decisionEvent = {
-        type: 'decision',
-        decision,
+      const entry = {
         url: href,
-        domain: getDomain(href),
-        sender,
-        trust,
-        decisionTimeSec: parseFloat(decisionTimeSec),
-        timestamp: new Date(decidedAt).toISOString(),
-        pageUrl: location.href,
+        action: decision,
+        time: decidedAt - clickedAt, // milliseconds
+        timestamp: decidedAt,
       };
-      recordLocalEvent(decisionEvent);
-      logToBackend(decisionEvent);
+      saveLog(entry);
 
-      return decisionEvent;
+      return entry;
     }
 
     document.getElementById('ccg-allow').addEventListener('click', () => {
