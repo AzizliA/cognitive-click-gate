@@ -4,6 +4,11 @@
 
 'use strict';
 
+// ── Constants ─────────────────────────────────────────────
+
+const MINDFUL_SCORE_THRESHOLD = 70;
+const MEDIUM_IMPULSE_THRESHOLD = 40;
+
 // ── Helpers ───────────────────────────────────────────────
 
 function todayStart() {
@@ -13,13 +18,13 @@ function todayStart() {
 }
 
 function computeStreak(logs) {
-  // Streak = consecutive mindful decisions (score >= 70) from the most recent backwards
+  // Streak = consecutive mindful decisions (score >= MINDFUL_SCORE_THRESHOLD) from the most recent backwards
   const sorted = logs
     .filter((e) => typeof e.score === 'number')
     .sort((a, b) => b.timestamp - a.timestamp);
   let streak = 0;
   for (const entry of sorted) {
-    if (entry.score >= 70) {
+    if (entry.score >= MINDFUL_SCORE_THRESHOLD) {
       streak++;
     } else {
       break;
@@ -52,7 +57,7 @@ function generateInsight(logs) {
   };
 
   let insight = '';
-  if (avgScore >= 70) {
+  if (avgScore >= MINDFUL_SCORE_THRESHOLD) {
     insight = '✨ Your awareness is improving — you tend to make decisive, confident clicks.';
   } else if (avgTime < 3) {
     insight = '⚡ You tend to click quickly. Try pausing a moment longer to reflect.';
@@ -72,7 +77,7 @@ function generateInsight(logs) {
     insight += ` You most often flag ${answerLabels[topAnswer] || topAnswer}.`;
   }
 
-  const impulseLevel = avgScore >= 70 ? 'Low' : avgScore >= 40 ? 'Medium' : 'High';
+  const impulseLevel = avgScore >= MINDFUL_SCORE_THRESHOLD ? 'Low' : avgScore >= MEDIUM_IMPULSE_THRESHOLD ? 'Medium' : 'High';
   insight += ` Impulse level: ${impulseLevel}.`;
 
   return insight;
@@ -114,7 +119,7 @@ function render(logs) {
 
   // Today's stats
   const totalToday = todayLogs.length;
-  const mindfulToday = todayLogs.filter((e) => e.score >= 70).length;
+  const mindfulToday = todayLogs.filter((e) => e.score >= MINDFUL_SCORE_THRESHOLD).length;
   const safeRate = totalToday > 0 ? Math.round((mindfulToday / totalToday) * 100) + '%' : '—';
   const times = todayLogs.map((e) => e.decisionTime).filter((t) => typeof t === 'number');
   const avgSpeed = times.length > 0

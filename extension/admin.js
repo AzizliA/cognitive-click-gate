@@ -4,6 +4,8 @@
 
 'use strict';
 
+const MINDFUL_SCORE_THRESHOLD = 70;
+
 const GAME_ANSWER_LABELS = {
   'phishing': '🎣 Phishing attempt',
   'social-media-trap': '📱 Social media trap',
@@ -40,7 +42,7 @@ function renderSummary(logs) {
     ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length)
     : '—';
 
-  const mindfulCount = scores.filter((s) => s >= 70).length;
+  const mindfulCount = scores.filter((s) => s >= MINDFUL_SCORE_THRESHOLD).length;
   const safeRate = scores.length > 0 ? Math.round((mindfulCount / scores.length) * 100) + '%' : '—';
 
   const gameCount = logs.filter((e) => e.gameAnswer).length;
@@ -176,7 +178,7 @@ function renderHistory(logs) {
     const domain = entry.domain || (entry.url ? new URL(entry.url).hostname : '—');
     const dt = entry.decisionTime != null ? entry.decisionTime.toFixed(1) + 's' : '—';
     const score = typeof entry.score === 'number' ? entry.score : '—';
-    const scoreCls = typeof entry.score === 'number' && entry.score >= 70
+    const scoreCls = typeof entry.score === 'number' && entry.score >= MINDFUL_SCORE_THRESHOLD
       ? 'score-mindful'
       : 'score-impulsive';
     const actionTag = entry.action === 'allow'
