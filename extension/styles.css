@@ -1,0 +1,212 @@
+/* =========================================================
+   Cognitive Click Gate – Extension Stylesheet
+   Styles for the full-screen gate overlay (content script)
+   ========================================================= */
+
+/* ── Reset inside overlay ── */
+#ccg-overlay *,
+#ccg-overlay *::before,
+#ccg-overlay *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ── Overlay backdrop ── */
+#ccg-overlay {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 2147483647 !important;
+  background: rgba(8, 8, 16, 0.92) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  backdrop-filter: blur(6px);
+  animation: ccg-fade-in 0.2s ease;
+}
+
+@keyframes ccg-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── Gate card ── */
+#ccg-gate {
+  background: #0f0f18;
+  border: 1px solid #2a2a45;
+  border-radius: 12px;
+  width: min(520px, 94vw);
+  padding: 36px 40px 28px;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.8);
+  animation: ccg-slide-up 0.25s ease;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  color: #d8d8e8;
+}
+
+@keyframes ccg-slide-up {
+  from { transform: translateY(20px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+/* ── Header ── */
+#ccg-header {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+#ccg-icon {
+  font-size: 36px;
+  margin-bottom: 10px;
+  display: block;
+}
+
+#ccg-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #e0e0f8;
+  letter-spacing: 0.3px;
+  margin-bottom: 6px;
+}
+
+#ccg-subtitle {
+  font-size: 13px;
+  color: #6868a8;
+  letter-spacing: 0.2px;
+}
+
+/* ── Body questions ── */
+#ccg-body {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-bottom: 24px;
+}
+
+.ccg-question {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ccg-label {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: #5858a8;
+}
+
+/* Text input */
+.ccg-input {
+  background: #15151f;
+  border: 1px solid #2e2e50;
+  border-radius: 6px;
+  padding: 9px 12px;
+  font-size: 14px;
+  color: #d0d0e8;
+  outline: none;
+  transition: border-color 0.15s;
+  font-family: inherit;
+}
+
+.ccg-input:focus {
+  border-color: #5050a0;
+}
+
+.ccg-input::placeholder {
+  color: #40405a;
+}
+
+/* Domain box */
+.ccg-domain-box {
+  background: #15151f;
+  border: 1px solid #2e2e50;
+  border-radius: 6px;
+  padding: 9px 12px;
+  font-size: 14px;
+  font-family: 'Courier New', monospace;
+  color: #a0a0f8;
+  word-break: break-all;
+}
+
+/* Trust radio group */
+.ccg-trust-group {
+  display: flex;
+  gap: 12px;
+}
+
+.ccg-trust-option {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  padding: 8px 14px;
+  background: #15151f;
+  border: 1px solid #2e2e50;
+  border-radius: 6px;
+  font-size: 13px;
+  transition: border-color 0.15s, background 0.15s;
+  flex: 1;
+  justify-content: center;
+}
+
+.ccg-trust-option:hover {
+  background: #1e1e30;
+  border-color: #4040a0;
+}
+
+.ccg-trust-option input[type='radio'] {
+  accent-color: #5050c0;
+}
+
+/* ── Action buttons ── */
+#ccg-actions {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.ccg-btn {
+  flex: 1;
+  padding: 12px 16px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.12s, opacity 0.15s;
+  letter-spacing: 0.2px;
+  font-family: inherit;
+}
+
+.ccg-btn:hover {
+  opacity: 0.88;
+  transform: translateY(-1px);
+}
+
+.ccg-btn:active {
+  transform: translateY(0);
+}
+
+.ccg-btn-allow {
+  background: #1a3a2a;
+  color: #5ac890;
+  border: 1px solid #2a5a3e;
+}
+
+.ccg-btn-block {
+  background: #3a1a1a;
+  color: #c85a5a;
+  border: 1px solid #5a2a2a;
+}
+
+/* ── URL preview ── */
+#ccg-url-preview {
+  font-size: 11px;
+  color: #38384a;
+  text-align: center;
+  word-break: break-all;
+  font-family: 'Courier New', monospace;
+  border-top: 1px solid #1a1a2a;
+  padding: 10px 0 0;
+}
