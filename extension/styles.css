@@ -252,7 +252,91 @@
   text-align: right;
 }
 
-/* ── Result panel ── */
+/* ── Game layer ── */
+#ccg-game {
+  background: #12121e;
+  border: 1px solid #2a2a45;
+  border-radius: 10px;
+  padding: 16px 18px;
+  margin-bottom: 20px;
+}
+
+#ccg-game-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+#ccg-game-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #9090d0;
+  letter-spacing: 0.3px;
+}
+
+#ccg-game-optional {
+  font-size: 11px;
+  color: #44445a;
+}
+
+#ccg-game-question {
+  font-size: 13px;
+  color: #8080b0;
+  margin-bottom: 12px;
+}
+
+#ccg-game-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.ccg-game-option {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  cursor: pointer;
+  padding: 8px 12px;
+  background: #15151f;
+  border: 1px solid #2e2e50;
+  border-radius: 7px;
+  font-size: 12px;
+  color: #9090c0;
+  transition: border-color 0.15s, background 0.15s;
+  user-select: none;
+}
+
+.ccg-game-option:hover {
+  background: #1e1e30;
+  border-color: #5050a0;
+}
+
+.ccg-game-option input[type='radio'] {
+  accent-color: #6060c0;
+  flex-shrink: 0;
+}
+
+.ccg-game-option:has(input:checked) {
+  background: #1a1a30;
+  border-color: #6060c0;
+  color: #c0c0f0;
+}
+
+/* ── Result game answer ── */
+.ccg-result-game {
+  font-size: 12px;
+  color: #8080b0;
+  background: #12121e;
+  border: 1px solid #2a2a45;
+  border-radius: 6px;
+  padding: 8px 14px;
+  text-align: center;
+}
+
+.ccg-result-game strong {
+  color: #a0a0d8;
+}
 #ccg-result {
   display: flex;
   flex-direction: column;
