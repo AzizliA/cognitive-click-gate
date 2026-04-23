@@ -81,33 +81,34 @@
 
         <div id="ccg-body">
           <div class="ccg-question">
-            <label class="ccg-label">Who is the sender of this link?</label>
-            <input
-              id="ccg-sender"
-              class="ccg-input"
-              type="text"
-              placeholder="e.g. a colleague, social media, newsletter…"
-              autocomplete="off"
-            />
-          </div>
-
-          <div class="ccg-question">
             <label class="ccg-label">What domain are you visiting?</label>
             <div id="ccg-domain" class="ccg-domain-box">${escapeHtml(domain)}</div>
           </div>
+        </div>
 
-          <div class="ccg-question">
-            <label class="ccg-label">Do you trust this destination?</label>
-            <div id="ccg-trust-group" class="ccg-trust-group">
-              <label class="ccg-trust-option">
-                <input type="radio" name="ccg-trust" value="yes" />
-                <span>Yes, I trust it</span>
-              </label>
-              <label class="ccg-trust-option">
-                <input type="radio" name="ccg-trust" value="no" />
-                <span>No / I'm not sure</span>
-              </label>
-            </div>
+        <div id="ccg-game">
+          <div id="ccg-game-header">
+            <span id="ccg-game-title">🎮 Threat Awareness Check</span>
+            <span id="ccg-game-optional">(optional)</span>
+          </div>
+          <p id="ccg-game-question">What type of risk could this link represent?</p>
+          <div id="ccg-game-options">
+            <label class="ccg-game-option">
+              <input type="radio" name="ccg-game" value="phishing" />
+              <span>🎣 Phishing attempt</span>
+            </label>
+            <label class="ccg-game-option">
+              <input type="radio" name="ccg-game" value="social-media-trap" />
+              <span>📱 Social media trap</span>
+            </label>
+            <label class="ccg-game-option">
+              <input type="radio" name="ccg-game" value="spam" />
+              <span>📧 Spam / newsletter</span>
+            </label>
+            <label class="ccg-game-option">
+              <input type="radio" name="ccg-game" value="legit" />
+              <span>✅ Legit source</span>
+            </label>
           </div>
         </div>
 
@@ -133,12 +134,21 @@
     return Math.max(0, Math.min(100, Math.round(100 - decisionTimeSec * 6)));
   }
 
-  function buildResultPanel(decisionTimeSec, score, action) {
-    const isMindful = score < 60;
+  function buildResultPanel(decisionTimeSec, score, action, gameAnswer) {
+    const isMindful = score >= 70;
     const feedback = isMindful
       ? '🟢 Mindful decision'
       : '🟡 Impulsive click detected';
     const actionLabel = action === 'allow' ? '✅ Allowed' : '❌ Blocked';
+    const gameAnswerLabels = {
+      'phishing': '🎣 Phishing attempt',
+      'social-media-trap': '📱 Social media trap',
+      'spam': '📧 Spam / newsletter',
+      'legit': '✅ Legit source',
+    };
+    const gameAnswerHtml = gameAnswer
+      ? `<div class="ccg-result-game">🎮 You identified: <strong>${escapeHtml(gameAnswerLabels[gameAnswer] || gameAnswer)}</strong></div>`
+      : '';
     return `
       <div id="ccg-result">
         <div id="ccg-result-feedback">${feedback}</div>
@@ -153,6 +163,7 @@
             <span class="ccg-result-stat-label">Impulse Score</span>
           </div>
         </div>
+        ${gameAnswerHtml}
       </div>
     `;
   }
@@ -187,10 +198,10 @@
       }
     }, 100);
 
-    // Focus the first input for accessibility
+    // Focus the first game option for accessibility
     setTimeout(() => {
-      const input = document.getElementById('ccg-sender');
-      if (input) input.focus();
+      const firstOption = overlay.querySelector('input[name="ccg-game"]');
+      if (firstOption) firstOption.focus();
     }, 50);
 
     function closeGate() {
@@ -201,11 +212,16 @@
       }
     }
 
-    function showResult(action, decisionTimeSec, score) {
+    function showResult(action, decisionTimeSec, score, gameAnswer) {
       const gate = document.getElementById('ccg-gate');
       if (gate) {
-        gate.innerHTML = buildResultPanel(decisionTimeSec, score, action);
+        gate.innerHTML = buildResultPanel(decisionTimeSec, score, action, gameAnswer);
       }
+    }
+
+    function getGameAnswer() {
+      const selected = overlay.querySelector('input[name="ccg-game"]:checked');
+      return selected ? selected.value : null;
     }
 
     function recordDecision(decision) {
@@ -216,24 +232,27 @@
       const decidedAt = Date.now();
       const decisionTimeSec = (decidedAt - clickedAt) / 1000;
       const score = computeScore(decisionTimeSec);
+      const gameAnswer = getGameAnswer();
 
       const entry = {
         url: href,
+        domain: getDomain(href),
         action: decision,
         time: decidedAt - clickedAt, // milliseconds (kept for backward compat)
         decisionTime: parseFloat(decisionTimeSec.toFixed(2)),
         score: score,
+        gameAnswer: gameAnswer,
         timestamp: decidedAt,
       };
       saveLog(entry);
 
-      return { decisionTimeSec, score };
+      return { decisionTimeSec, score, gameAnswer };
     }
 
     document.getElementById('ccg-allow').addEventListener('click', () => {
       const result = recordDecision('allow');
       if (!result) return;
-      showResult('allow', result.decisionTimeSec, result.score);
+      showResult('allow', result.decisionTimeSec, result.score, result.gameAnswer);
       setTimeout(() => {
         closeGate();
         window.location.href = href;
@@ -243,7 +262,7 @@
     document.getElementById('ccg-block').addEventListener('click', () => {
       const result = recordDecision('block');
       if (!result) return;
-      showResult('block', result.decisionTimeSec, result.score);
+      showResult('block', result.decisionTimeSec, result.score, result.gameAnswer);
       setTimeout(closeGate, 2000);
     });
 
@@ -253,7 +272,7 @@
         const result = recordDecision('block');
         document.removeEventListener('keydown', handleKey);
         if (!result) return;
-        showResult('block', result.decisionTimeSec, result.score);
+        showResult('block', result.decisionTimeSec, result.score, result.gameAnswer);
         setTimeout(closeGate, 2000);
       }
     }

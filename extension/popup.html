@@ -8,8 +8,7 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      width: 320px;
-      min-height: 260px;
+      width: 340px;
       background: #0f0f13;
       color: #e8e8ec;
       font-family: 'Segoe UI', system-ui, sans-serif;
@@ -18,7 +17,7 @@
 
     header {
       background: #1a1a24;
-      padding: 14px 16px;
+      padding: 12px 16px;
       border-bottom: 1px solid #2a2a3a;
       display: flex;
       align-items: center;
@@ -28,64 +27,123 @@
     header .icon { font-size: 20px; }
 
     header h1 {
-      font-size: 15px;
-      font-weight: 600;
+      font-size: 14px;
+      font-weight: 700;
       color: #c8c8d8;
       letter-spacing: 0.3px;
+      flex: 1;
+    }
+
+    #gate-status {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 20px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    #gate-status.active {
+      background: #1a3a2a;
+      color: #5ac890;
+      border: 1px solid #2a5a3e;
+    }
+
+    #gate-status.idle {
+      background: #1a1a2a;
+      color: #5858a8;
+      border: 1px solid #2a2a45;
     }
 
     .section {
-      padding: 14px 16px;
+      padding: 12px 16px;
       border-bottom: 1px solid #1e1e2e;
     }
 
-    .section h2 {
-      font-size: 11px;
+    .section-title {
+      font-size: 10px;
       text-transform: uppercase;
       letter-spacing: 1px;
-      color: #6060a0;
-      margin-bottom: 10px;
+      color: #4a4a88;
+      margin-bottom: 8px;
+      font-weight: 600;
     }
 
+    /* Current session */
+    #session-domain {
+      font-size: 13px;
+      font-family: 'Courier New', monospace;
+      color: #a0a0f8;
+      background: #12121e;
+      border: 1px solid #2a2a45;
+      border-radius: 6px;
+      padding: 7px 10px;
+      margin-bottom: 6px;
+      word-break: break-all;
+    }
+
+    #session-meta {
+      font-size: 11px;
+      color: #50508a;
+      display: flex;
+      gap: 12px;
+    }
+
+    #session-meta span { display: flex; align-items: center; gap: 4px; }
+
+    /* Insight */
+    #insight-box {
+      background: #12121e;
+      border: 1px solid #2a2a45;
+      border-left: 3px solid #5050a0;
+      border-radius: 6px;
+      padding: 9px 12px;
+      font-size: 12px;
+      color: #9090c8;
+      line-height: 1.5;
+    }
+
+    /* Stats grid */
     .stat-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 8px;
+      gap: 6px;
     }
 
     .stat-card {
       background: #1a1a24;
       border: 1px solid #2a2a3a;
       border-radius: 6px;
-      padding: 10px;
+      padding: 8px 10px;
       text-align: center;
     }
 
     .stat-value {
-      font-size: 22px;
+      font-size: 20px;
       font-weight: 700;
       color: #a0a0ff;
     }
 
     .stat-label {
-      font-size: 11px;
-      color: #6868a8;
+      font-size: 10px;
+      color: #5868a8;
       margin-top: 2px;
     }
 
-    .wide { grid-column: 1 / -1; }
-
     .allow-color { color: #4caf85; }
     .block-color { color: #cf5a5a; }
+    .streak-color { color: #f0b040; }
 
+    /* Actions */
     .footer {
-      padding: 12px 16px;
+      padding: 10px 16px 12px;
       display: flex;
-      gap: 8px;
+      flex-direction: column;
+      gap: 6px;
     }
 
     .btn {
-      flex: 1;
+      width: 100%;
       padding: 8px;
       border: none;
       border-radius: 6px;
@@ -93,67 +151,78 @@
       font-weight: 600;
       cursor: pointer;
       transition: opacity 0.15s;
+      text-align: center;
     }
 
     .btn:hover { opacity: 0.85; }
 
-    .btn-stats {
-      background: #2a2a4a;
-      color: #9090d0;
+    .btn-admin {
+      background: #1e1e3a;
+      color: #8080d0;
+      border: 1px solid #2a2a50;
     }
 
     .btn-clear {
-      background: #2a1a1a;
-      color: #a06060;
+      background: #1e1010;
+      color: #906060;
+      border: 1px solid #3a1a1a;
     }
 
     #status {
       font-size: 11px;
       color: #5050a0;
       text-align: center;
-      padding: 0 16px 10px;
+      padding: 0 16px 8px;
+      min-height: 20px;
     }
   </style>
 </head>
 <body>
   <header>
-    <span class="icon">⚠</span>
+    <span class="icon">🧠</span>
     <h1>Cognitive Click Gate</h1>
+    <span id="gate-status" class="idle">Idle</span>
   </header>
 
+  <div class="section" id="session-section">
+    <div class="section-title">⚠ Last Session</div>
+    <div id="session-domain">—</div>
+    <div id="session-meta">
+      <span id="session-time">⏱ —</span>
+      <span id="session-action">—</span>
+    </div>
+  </div>
+
   <div class="section">
-    <h2>Session Stats</h2>
+    <div class="section-title">🎮 Behavioral Insight</div>
+    <div id="insight-box">Loading…</div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">📊 Today's Stats</div>
     <div class="stat-grid">
       <div class="stat-card">
-        <div class="stat-value" id="total">—</div>
-        <div class="stat-label">Total Clicks</div>
+        <div class="stat-value" id="today-total">—</div>
+        <div class="stat-label">Clicks Today</div>
       </div>
       <div class="stat-card">
-        <div class="stat-value" id="avg-time">—</div>
-        <div class="stat-label">Avg Decision (s)</div>
+        <div class="stat-value allow-color" id="safe-rate">—</div>
+        <div class="stat-label">Safe Decision %</div>
       </div>
       <div class="stat-card">
-        <div class="stat-value allow-color" id="allows">—</div>
-        <div class="stat-label">Allowed</div>
+        <div class="stat-value" id="avg-speed">—</div>
+        <div class="stat-label">Avg Speed (s)</div>
       </div>
       <div class="stat-card">
-        <div class="stat-value block-color" id="blocks">—</div>
-        <div class="stat-label">Blocked</div>
-      </div>
-      <div class="stat-card wide">
-        <div class="stat-value" id="avg-score">—</div>
-        <div class="stat-label">Avg Impulse Score</div>
-      </div>
-      <div class="stat-card wide">
-        <div class="stat-value" id="ratio">—</div>
-        <div class="stat-label">Allow Ratio</div>
+        <div class="stat-value streak-color" id="streak">—</div>
+        <div class="stat-label">Mindful Streak 🔥</div>
       </div>
     </div>
   </div>
 
   <div class="footer">
-    <button class="btn btn-stats" id="open-stats">👉 View Stats</button>
-    <button class="btn btn-clear" id="clear-stats">🗑 Clear</button>
+    <button class="btn btn-admin" id="open-admin">📈 Open Advanced Analytics</button>
+    <button class="btn btn-clear" id="clear-stats">🗑 Clear All Data</button>
   </div>
 
   <div id="status"></div>
