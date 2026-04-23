@@ -1,5 +1,5 @@
 /* =========================================================
-   Cognitive Click Gate – Popup Script
+   Cognitive Click Gate – Stats Page Script
    ========================================================= */
 
 'use strict';
@@ -15,14 +15,12 @@ function computeStats(logs) {
   const times = decisions
     .map((e) => e.time)
     .filter((t) => typeof t === 'number' && !isNaN(t));
-  const avgTime =
+  const avgTimeSec =
     times.length > 0
       ? (times.reduce((a, b) => a + b, 0) / times.length / 1000).toFixed(1)
       : null;
 
-  const ratio = total > 0 ? ((allows / total) * 100).toFixed(0) + '%' : '—';
-
-  return { total, allows, blocks, avgTime, ratio };
+  return { total, allows, blocks, avgTimeSec };
 }
 
 function render(stats) {
@@ -30,11 +28,10 @@ function render(stats) {
   document.getElementById('allows').textContent = stats.allows;
   document.getElementById('blocks').textContent = stats.blocks;
   document.getElementById('avg-time').textContent =
-    stats.avgTime !== null ? stats.avgTime : '—';
-  document.getElementById('ratio').textContent = stats.ratio;
+    stats.avgTimeSec !== null ? stats.avgTimeSec : '—';
 }
 
-function init() {
+function loadAndRender() {
   chrome.storage.local.get(null, function (items) {
     const logs = Object.keys(items)
       .filter((k) => k.startsWith('ccg_log_'))
@@ -43,22 +40,16 @@ function init() {
   });
 }
 
-// ── Event listeners ───────────────────────────────────────────
-
-document.getElementById('open-stats').addEventListener('click', () => {
-  chrome.tabs.create({ url: chrome.runtime.getURL('stats.html') });
-});
-
-document.getElementById('clear-stats').addEventListener('click', () => {
+document.getElementById('clear-btn').addEventListener('click', function () {
   chrome.storage.local.get(null, function (items) {
     const keys = Object.keys(items).filter((k) => k.startsWith('ccg_log_'));
     chrome.storage.local.remove(keys, function () {
       render(computeStats([]));
       const statusEl = document.getElementById('status');
-      statusEl.textContent = 'Stats cleared.';
+      statusEl.textContent = 'Logs cleared.';
       setTimeout(() => { statusEl.textContent = ''; }, 3000);
     });
   });
 });
 
-init();
+loadAndRender();

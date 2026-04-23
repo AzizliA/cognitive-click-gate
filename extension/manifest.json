@@ -5,8 +5,7 @@
   "description": "Interrupts reflex clicking and forces a short cognitive reflection step before navigating to external links.",
   "permissions": [
     "storage",
-    "tabs",
-    "scripting"
+    "tabs"
   ],
   "host_permissions": [
     "<all_urls>"
